@@ -21,21 +21,21 @@ connection.connect((err) => {
 
 // Function to start the application of CFONT 
 cfonts.say('SQL Employee Tracker', {
-	font: 'block',              // define the font face
-	align: 'left',              // define text alignment
-	colors: ['blue'],         // define all colors
-	background: 'transparent',  // define the background color, you can also use `backgroundColor` here as key
-	letterSpacing: 1,           // define letter spacing
-	lineHeight: 1,              // define the line height
-	space: true,                // define if the output text should have empty lines on top and on the bottom
-	maxLength: '0',             // define how many character can be on one line
-	gradient: false,            // define your two gradient colors
-	independentGradient: false, // define if you want to recalculate the gradient for each new line
-	transitionGradient: false,  // define if this is a transition between colors directly
-	env: 'node'                 // define the environment cfonts is being executed in
+	font: 'block',              
+	align: 'left',              
+	colors: ['blue'],         
+	background: 'transparent',  
+	letterSpacing: 1,           
+	lineHeight: 1,              
+	space: true,                
+	maxLength: '0',             
+	gradient: false,            
+	independentGradient: false, 
+	transitionGradient: false,  
+	env: 'node'                 
 });
 
-// Function to Start Thomas SQL Employee Tracker Application
+// Function to Start SQL Employee Tracker 
 function start() {
     inquirer
         .prompt({
@@ -121,7 +121,6 @@ function viewAllRoles() {
     connection.query(query, (err, res) => {
         if (err) throw err;
         console.table(res);
-        // restart the application
         start();
     });
 }
@@ -138,7 +137,6 @@ function viewAllEmployees() {
     connection.query(query, (err, res) => {
         if (err) throw err;
         console.table(res);
-        // restart the application
         start();
     });
 }
@@ -157,7 +155,6 @@ function addDepartment() {
             connection.query(query, (err, res) => {
                 if (err) throw err;
                 console.log(`Added department ${answer.name} to the database!`);
-                // restart the application
                 start();
                 console.log(answer.name);
             });
@@ -206,7 +203,6 @@ function addRole() {
                         console.log(
                             `Added role ${answers.title} with salary ${answers.salary} to the ${answers.department} department in the database!`
                         );
-                        // restart the application
                         start();
                     }
                 );
@@ -361,7 +357,6 @@ function addManager() {
                             console.log(
                                 `Added manager ${manager.first_name} ${manager.last_name} to employee ${employee.first_name} ${employee.last_name} in department ${department.department_name}!`
                             );
-                            // restart the application
                             start();
                         }
                     );
@@ -416,7 +411,6 @@ function updateEmployeeRole() {
                             console.log(
                                 `Updated ${employee.first_name} ${employee.last_name}'s role to ${role.title} in the database!`
                             );
-                            // restart the application
                             start();
                         }
                     );
@@ -472,8 +466,6 @@ function viewEmployeesByManager() {
                 );
             });
         }
-
-        // restart the application
         start();
     });
 }
@@ -486,7 +478,6 @@ function viewEmployeesByDepartment() {
         if (err) throw err;
         console.log("\nEmployees by department:");
         console.table(res);
-        // restart the application
         start();
     });
 }
@@ -547,7 +538,6 @@ function deleteEmployee() {
                         `Deleted employee with ID ${answer.id} from the database!`
                         
                     );
-                    // restart the application
                     start();
                 });
             });
@@ -627,7 +617,6 @@ function deleteDepartment() {
                             console.log(
                                 `Deleted department with ID ${answer.departmentId} from the database!`
                             );
-                            // restart the application
                             start();
                         }
                     );
@@ -674,7 +663,6 @@ function viewTotalUtilizedBudgetOfDepartment() {
                     console.log(
                         `The total salary for employees in this department is $${totalSalary}`
                     );
-                    // restart the application
                     start();
                 });
             });
