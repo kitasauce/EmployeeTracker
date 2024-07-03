@@ -9,7 +9,11 @@ This application allows the user to interact with an employee tracker database f
 - Inquirer.js
 - Postgres
 3. Open the repository in any source code editor.
-4. Open the integrated terminal for the document and complete the respective installation guides provided above in section (2) to ensure the cloned documentation will operate.
+4. Open the terminal and navigate to the repository folder.
+5. Run the following command to install the dependencies:
+- npm i
+6. Run the following command to start the application:
+- node server.js
 
 ## License 
 The application is covered under the following license:
