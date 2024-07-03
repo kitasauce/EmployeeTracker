@@ -1,39 +1,28 @@
 const inquirer = require("inquirer");
-const mysql = require("mysql2");
+const connection = require("./db/connection");
 const cfonts = require('cfonts');
+// require('console.table')
 
-// create a MySQL connection
-const connection = mysql.createConnection({
-    host: "localhost",
-    port: 3001,
-    user: "root",
-    password: "",
-    database: "employeeTracker_db",
-});
 
-// connect to the database
-connection.connect((err) => {
-    if (err) throw err;
-    console.log("Connected to the database!");
-    // start the application
-    start();
-});
-
-// Function to start the application of CFONT 
-cfonts.say('SQL Employee Tracker', {
-	font: 'block',              
-	align: 'left',              
-	colors: ['blue'],         
-	background: 'transparent',  
-	letterSpacing: 1,           
-	lineHeight: 1,              
-	space: true,                
-	maxLength: '0',             
-	gradient: false,            
-	independentGradient: false, 
-	transitionGradient: false,  
-	env: 'node'                 
-});
+function init(){
+    // Function to start the application of CFONT 
+    cfonts.say('SQL Employee Tracker', {
+        font: 'block',              
+        align: 'left',              
+        colors: ['blue'],         
+        background: 'transparent',  
+        letterSpacing: 1,           
+        lineHeight: 1,              
+        space: true,                
+        maxLength: '0',             
+        gradient: false,            
+        independentGradient: false, 
+        transitionGradient: false,  
+        env: 'node'                 
+    });
+start()
+}
+init()
 
 // Function to Start SQL Employee Tracker 
 function start() {
@@ -106,10 +95,11 @@ function start() {
 
 // function to view all departments
 function viewAllDepartments() {
-    const query = "SELECT * FROM departments";
-    connection.query(query, (err, res) => {
+    const query = "SELECT * FROM department";
+    connection.query(query, (err, {rows}) => {
         if (err) throw err;
-        console.table(res);
+       
+        console.table(rows);
         // restart the application
         start();
     });
@@ -117,10 +107,11 @@ function viewAllDepartments() {
 
 // function to view all roles
 function viewAllRoles() {
-    const query = "SELECT roles.title, roles.id, departments.department_name, roles.salary from roles join departments on roles.department_id = departments.id";
-    connection.query(query, (err, res) => {
+    const query = "SELECT role.title, role.id, department.name, role.salary from role left join department on role.department_id = department.id";
+    connection.query(query, (err, {rows}) => {
         if (err) throw err;
-        console.table(res);
+       
+        console.table(rows);
         start();
     });
 }
@@ -128,15 +119,15 @@ function viewAllRoles() {
 // function to view all employees
 function viewAllEmployees() {
     const query = `
-    SELECT e.id, e.first_name, e.last_name, r.title, d.department_name, r.salary, CONCAT(m.first_name, ' ', m.last_name) AS manager_name
+    SELECT e.id, e.first_name, e.last_name, r.title, d.name, r.salary, CONCAT(m.first_name, ' ', m.last_name) AS manager_name
     FROM employee e
-    LEFT JOIN roles r ON e.role_id = r.id
-    LEFT JOIN departments d ON r.department_id = d.id
+    LEFT JOIN role r ON e.role_id = r.id
+    LEFT JOIN department d ON r.department_id = d.id
     LEFT JOIN employee m ON e.manager_id = m.id;
     `;
     connection.query(query, (err, res) => {
         if (err) throw err;
-        console.table(res);
+        console.table(res.rows);
         start();
     });
 }
@@ -151,8 +142,8 @@ function addDepartment() {
         })
         .then((answer) => {
             console.log(answer.name);
-            const query = `INSERT INTO departments (department_name) VALUES ("${answer.name}")`;
-            connection.query(query, (err, res) => {
+            const query = `INSERT INTO department (name) VALUES ($1)`;
+            connection.query(query, [answer.name],(err, res) => {
                 if (err) throw err;
                 console.log(`Added department ${answer.name} to the database!`);
                 start();
@@ -162,7 +153,7 @@ function addDepartment() {
 }
 
 function addRole() {
-    const query = "SELECT * FROM departments";
+    const query = "SELECT * FROM department";
     connection.query(query, (err, res) => {
         if (err) throw err;
         inquirer
@@ -182,7 +173,7 @@ function addRole() {
                     name: "department",
                     message: "Select the department for the new role:",
                     choices: res.map(
-                        (department) => department.department_name
+                        (department) => department.name
                     ),
                 },
             ])
@@ -296,7 +287,7 @@ function addEmployee() {
 }
 // Function to add a Manager
 function addManager() {
-    const queryDepartments = "SELECT * FROM departments";
+    const queryDepartments = "SELECT * FROM department";
     const queryEmployees = "SELECT * FROM employee";
 
     connection.query(queryDepartments, (err, resDepartments) => {
@@ -335,7 +326,7 @@ function addManager() {
                 .then((answers) => {
                     const department = resDepartments.find(
                         (department) =>
-                            department.department_name === answers.department
+                            department.name === answers.department
                     );
                     const employee = resEmployees.find(
                         (employee) =>
@@ -355,7 +346,7 @@ function addManager() {
                         (err, res) => {
                             if (err) throw err;
                             console.log(
-                                `Added manager ${manager.first_name} ${manager.last_name} to employee ${employee.first_name} ${employee.last_name} in department ${department.department_name}!`
+                                `Added manager ${manager.first_name} ${manager.last_name} to employee ${employee.first_name} ${employee.last_name} in department ${department.name}!`
                             );
                             start();
                         }
@@ -369,7 +360,7 @@ function addManager() {
 function updateEmployeeRole() {
     const queryEmployees =
         "SELECT employee.id, employee.first_name, employee.last_name, roles.title FROM employee LEFT JOIN roles ON employee.role_id = roles.id";
-    const queryRoles = "SELECT * FROM roles";
+    const queryRoles = "SELECT * FROM role";
     connection.query(queryEmployees, (err, resEmployees) => {
         if (err) throw err;
         connection.query(queryRoles, (err, resRoles) => {
@@ -428,7 +419,7 @@ function viewEmployeesByManager() {
         e.first_name, 
         e.last_name, 
         r.title, 
-        d.department_name, 
+        d.name, 
         CONCAT(m.first_name, ' ', m.last_name) AS manager_name
       FROM 
         employee e
@@ -584,11 +575,11 @@ function deleteRole() {
 // Fuction to DELETE Department
 function deleteDepartment() {
     // get the list of departments
-    const query = "SELECT * FROM departments";
+    const query = "SELECT * FROM department";
     connection.query(query, (err, res) => {
         if (err) throw err;
         const departmentChoices = res.map((department) => ({
-            name: department.department_name,
+            name: department.name,
             value: department.id,
         }));
 
@@ -608,7 +599,7 @@ function deleteDepartment() {
                     // go back to the previous menu
                     deleteDepartmentsRolesEmployees();
                 } else {
-                    const query = "DELETE FROM departments WHERE id = ?";
+                    const query = "DELETE FROM department WHERE id = ?";
                     connection.query(
                         query,
                         [answer.departmentId],
@@ -626,11 +617,11 @@ function deleteDepartment() {
 }
 // Function to view Total Utilized Budget of Department
 function viewTotalUtilizedBudgetOfDepartment() {
-    const query = "SELECT * FROM departments";
+    const query = "SELECT * FROM department";
     connection.query(query, (err, res) => {
         if (err) throw err;
         const departmentChoices = res.map((department) => ({
-            name: department.department_name,
+            name: department.name,
             value: department.id,
         }));
 
@@ -647,16 +638,16 @@ function viewTotalUtilizedBudgetOfDepartment() {
                 // calculate the total salary for the selected department
                 const query =
                     `SELECT 
-                    departments.department_name AS department,
+                    department.name AS department,
                     SUM(roles.salary) AS total_salary
                   FROM 
-                    departments
-                    INNER JOIN roles ON departments.id = roles.department_id
-                    INNER JOIN employee ON roles.id = employee.role_id
+                    department
+                    INNER JOIN roles ON department.id = role.department_id
+                    INNER JOIN employee ON role.id = employee.role_id
                   WHERE 
-                    departments.id = ?
+                    department.id = ?
                   GROUP BY 
-                    departments.id;`;
+                    department.id;`;
                 connection.query(query, [answer.departmentId], (err, res) => {
                     if (err) throw err;
                     const totalSalary = res[0].total_salary;

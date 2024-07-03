@@ -7,8 +7,7 @@ This application allows the user to interact with an employee tracker database f
 1. Clone or download the zip.folder of the repository
 2. Install the following: 
 - Inquirer.js
-- MySQL2
-- Console.table
+- Postgres
 3. Open the repository in any source code editor.
 4. Open the integrated terminal for the document and complete the respective installation guides provided above in section (2) to ensure the cloned documentation will operate.
 

@@ -1,4 +1,4 @@
-INSERT INTO departments (department_name)
+INSERT INTO department(name)
 VALUES 
 ('Executive Board'),
 ('Marketing'),
@@ -11,7 +11,7 @@ VALUES
 ('Legal'),
 ('Maintenance');
 
-INSERT INTO roles (title, salary, department_id)
+INSERT INTO role(title, salary, department_id)
 VALUES 
 ('Chief Executive Officer', 1000000.00, 1),
 ('Marketing Manager', 130000.00, 2),
@@ -26,13 +26,13 @@ VALUES
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
-('James', 'Bond', 1, 1),
-('Carl', 'Urban', 2, 2),
-('Andrew', 'Zubac', 3, 3),
-('Thomas', 'Mark', 4, 4),
-('Shaw', 'Hobbes', 5, 5),
-('Ed', 'Sigo', 6, 6),
-('Enron', 'Fujikawa', 7, 7),
-('Tim', 'Kearin', 8, 8),
-('Ahbod', 'Esmali', 9, 9),
-('T', 'Killa', 10, 10);
+('James', 'Bond', 1, NULL),
+('Carl', 'Urban', 2, 1),
+('Andrew', 'Zubac', 3, NULL),
+('Thomas', 'Mark', 4, 3);
+-- ('Shaw', 'Hobbes', 5, 5),
+-- ('Ed', 'Sigo', 6, 6),
+-- ('Enron', 'Fujikawa', 7, 7),
+-- ('Tim', 'Kearin', 8, 8),
+-- ('Ahbod', 'Esmali', 9, 9),
+-- ('T', 'Killa', 10, 10);
