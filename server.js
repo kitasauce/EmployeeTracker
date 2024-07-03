@@ -204,7 +204,7 @@ function addRole() {
 // Function to add an employee
 function addEmployee() {
     // Retrieve list of roles from the database
-    connection.query("SELECT id, title FROM roles", (error, results) => {
+    connection.query("SELECT id, title FROM role", (error, results) => {
         if (error) {
             console.error(error);
             return;
